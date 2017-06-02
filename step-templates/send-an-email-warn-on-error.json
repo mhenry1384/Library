@@ -1,0 +1,125 @@
+{
+  "Id": "c5727ab0-b7b3-453d-9b4a-6596ccce0241",
+  "Name": "Send an email (Warn On Error)",
+  "Description": "Sends an email.  Sets a warning if email fails instead of an error.  We don't want sending an \"deployment successful\" email to cause the deployment to fail if there's a problem with the mail server.",
+  "ActionType": "Octopus.Script",
+  "Version": 8,
+  "Properties": {
+    "Octopus.Action.Script.Syntax": "PowerShell",
+    "Octopus.Action.Script.ScriptSource": "Inline",
+    "Octopus.Action.RunOnServer": "false",
+    "Octopus.Action.Script.ScriptBody": "# I'd prefer to get the the SMTP settings off the Octopus Configuration -> SMTP, but as far as I can tell this is not exposed.\n$booleanParams = @{}\nif ($pBodyIsHTML) {$booleanParams[\"BodyAsHtml\"]=$true;}\nif ($pUseSSL) {$booleanParams[\"UseSSL\"]=$true;}\n$output = \"Sending email. SmtpServer: $pSMTPHost. Port: $pSMTPPort. Subject: $pSubject. To: $pTo\"\nif (![String]::IsNullOrWhiteSpace($pCc)) \n{\n    $booleanParams[\"Cc\"] = $pCc -split \";\"\n    $output += \" Cc: $pCc.\"\n}\nif (![String]::IsNullOrWhiteSpace($pBcc)) \n{\n    $booleanParams[\"Bcc\"] = $pBcc -split \";\"\n    $output += \" Bcc: $pBcc.\"\n}\ntry\n{\n    echo $output\n    Send-MailMessage -To ($pTo -split \";\") -From $pFrom -Subject $pSubject -Body $pBody  -SmtpServer $pSMTPHost -Port $pSMTPPort @booleanParams\n    echo \"Success.\"\n}\ncatch\n{\n    echo $_\n    Write-Error $_.ErrorDetails.Message -ErrorAction Continue\n}",
+    "Octopus.Action.Script.ScriptFileName": null,
+    "Octopus.Action.Package.FeedId": null,
+    "Octopus.Action.Package.PackageId": null
+  },
+  "Parameters": [
+    {
+      "Id": "86ddd7a9-ff0a-4e41-af6b-95fbe9c5fcf9",
+      "Name": "pTo",
+      "Label": "To",
+      "HelpText": null,
+      "DefaultValue": null,
+      "DisplaySettings": {
+        "Octopus.ControlType": "SingleLineText"
+      }
+    },
+    {
+      "Id": "3217b16f-d439-4c52-b8ef-c8a716b8ed8f",
+      "Name": "pCc",
+      "Label": "Cc",
+      "HelpText": null,
+      "DefaultValue": null,
+      "DisplaySettings": {
+        "Octopus.ControlType": "SingleLineText"
+      }
+    },
+    {
+      "Id": "377d1bb1-986f-4ca6-9e8a-1ab1478a0759",
+      "Name": "pBcc",
+      "Label": "Bcc",
+      "HelpText": null,
+      "DefaultValue": null,
+      "DisplaySettings": {
+        "Octopus.ControlType": "SingleLineText"
+      }
+    },
+    {
+      "Id": "44221076-6514-4bcb-bef0-de7d6ddd6279",
+      "Name": "pSubject",
+      "Label": "Subject",
+      "HelpText": null,
+      "DefaultValue": null,
+      "DisplaySettings": {
+        "Octopus.ControlType": "SingleLineText"
+      }
+    },
+    {
+      "Id": "8e00ae26-0e8f-46fb-9ba6-c8e0b2250765",
+      "Name": "pBody",
+      "Label": "Body",
+      "HelpText": null,
+      "DefaultValue": null,
+      "DisplaySettings": {
+        "Octopus.ControlType": "MultiLineText"
+      }
+    },
+    {
+      "Id": "34ac8296-67a2-4e53-8db4-73c8beef385c",
+      "Name": "pBodyIsHTML",
+      "Label": "Body Is HTML",
+      "HelpText": null,
+      "DefaultValue": null,
+      "DisplaySettings": {
+        "Octopus.ControlType": "Checkbox"
+      }
+    },
+    {
+      "Id": "bca827a2-0181-411d-bc77-a650be4e9440",
+      "Name": "pFrom",
+      "Label": "From",
+      "HelpText": null,
+      "DefaultValue": null,
+      "DisplaySettings": {
+        "Octopus.ControlType": "SingleLineText"
+      }
+    },
+    {
+      "Id": "9401f947-fe31-44f9-8660-c88230f06435",
+      "Name": "pSMTPHost",
+      "Label": "SMTP Host",
+      "HelpText": null,
+      "DefaultValue": null,
+      "DisplaySettings": {
+        "Octopus.ControlType": "SingleLineText"
+      }
+    },
+    {
+      "Id": "6008b325-fcb1-4d53-aab7-00a919464ef6",
+      "Name": "pSMTPPort",
+      "Label": "SMTP Port",
+      "HelpText": null,
+      "DefaultValue": "25",
+      "DisplaySettings": {
+        "Octopus.ControlType": "SingleLineText"
+      }
+    },
+    {
+      "Id": "cbcad4fc-4f3f-4d1f-b9ea-4f7ac15e40c1",
+      "Name": "pUseSSL",
+      "Label": "Use SSL",
+      "HelpText": null,
+      "DefaultValue": null,
+      "DisplaySettings": {
+        "Octopus.ControlType": "Checkbox"
+      }
+    }
+  ],
+  "LastModifiedOn": "2016-06-02T12:26:31.568ZZ",
+  "LastModifiedBy": "mhenry1384",
+  "$Meta": {
+    "ExportedAt": "2017-06-02T13:36:59.350Z",
+    "OctopusVersion": "3.4.11",
+    "Type": "ActionTemplate"
+  }
+}
