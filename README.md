@@ -1,5 +1,12 @@
 Library
 =======
+Differences between this fork and the main fork
+
+* Step template to send an email, but warn if there's an error sending
+* Updated File System - Create Folder to add permissions
+
+Library
+=======
 
 A repository of step templates and other community-contributed extensions to Octopus Deploy.
 
